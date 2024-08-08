@@ -8,16 +8,23 @@ const FRAMES = 60;
 let goblinImage = null;
 let bgImage = null;
 let bgPattern = null;
+let boneImage = null;
 let x = 0;
 let y = 0;
+
+// sistema de pontuaçao
+let pontuacao = document.getElementById('pontos');
+let pontos = 0;
 
 let cellWidth = 32; // Largura da célula de recorte
 let cellHeight = 50; // Altura da célula de recorte
 let totalSprites = 4; // Total de sprites
-let goblinSpeed = 5; // Velocidade de troca de sprites (anime)
+let goblinSpeed = 10; // Velocidade de troca de sprites (anime)
 let goblinPositionY = 0;
 let goblinPositionX = 0;
-let goblinDistancia = 5;
+let bonePositionX = 0;
+let bonePositionY = 0;
+let goblinDistancia = 2.2;
 let animationFrameId = null;
 let lastTime = 0;
 let spriteInterval = 1000 / (FRAMES * goblinSpeed / 100);
@@ -29,28 +36,34 @@ const init = async () => {
     goblinImage = await loadImage('img/skeleton.png');
     bgImage = await loadImage('img/bg4.png');
     bgPattern = CTX.createPattern(bgImage, 'repeat');
+    boneImage = await loadImage('img/bone.png');
+
+    const {x,y} = generateBonePosition();
+    bonePositionX = x;
+    bonePositionY = y;
+    
     keyDownUp(window);
     loop();
+
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
 };
 
 const handleKeyDown = (event) => {
     if (event.key === 'ArrowDown' && !animationFrameId) {
-        animeSprite(performance.now());
+        animeSpriteDown(performance.now());
+    }
+    if (event.key === 'ArrowUp' && !animationFrameId) {
+        animeSpriteUp(performance.now());
     }
 
-		if (event.key === 'ArrowUp' && !animationFrameId) {
-			animeSprite(performance.now());
-		}
+    if (event.key === 'ArrowLeft' && !animationFrameId) {
+        animeSpriteLeft(performance.now());
+    }
 
-		if (event.key === 'ArrowLeft' && !animationFrameId) {
-			animeSprite(performance.now());
-		}
-
-		if (event.key === 'ArrowRight' && !animationFrameId) {
-			animeSprite(performance.now());
-		}
+    if (event.key === 'ArrowRight' && !animationFrameId) {
+        animeSpriteRight(performance.now());
+    }
 };
 
 const handleKeyUp = (event) => {
@@ -75,21 +88,76 @@ const handleKeyUp = (event) => {
 		}
 };
 
-const animeSprite = (time) => {
+const animeSpriteDown = (time) => {
     if (time - lastTime >= spriteInterval) {
-        x = x < totalSprites - 1 ? x + 1 : 0;
+        y= 0;
+        if (x < (totalSprites - 1)) {
+            x = x + 1;
+        } else {
+            x = 0;
+        }
         lastTime = time;
     }
-    animationFrameId = requestAnimationFrame(animeSprite);
+    animationFrameId = requestAnimationFrame(animeSpriteDown);
 };
 
-const animeSprite2 = (time) => {
+const animeSpriteUp = (time) => {
 	if (time - lastTime >= spriteInterval) {
-			y = y < totalSprites - 1 ? x + 1 : 0;
+        y= 3;
+        if (x < totalSprites - 1) {
+            x = x + 1;
+        } else {
+            x = 0;
+        }
 			lastTime = time;
 	}
-	animationFrameId = requestAnimationFrame(animeSprite);
+	animationFrameId = requestAnimationFrame(animeSpriteUp);
 };
+
+const animeSpriteLeft = (time) => {
+	if (time - lastTime >= spriteInterval) {
+        y= 1;
+        if (x < totalSprites - 1) {
+            x = x + 1;
+        } else {
+            x = 0;
+        }
+			lastTime = time;
+	}
+	animationFrameId = requestAnimationFrame(animeSpriteLeft);
+};
+
+const animeSpriteRight = (time) => {
+	if (time - lastTime >= spriteInterval) {
+        y= 1.9;
+        if (x < totalSprites - 1) {
+            x = x + 1;
+        } else {
+            x = 0;
+        }
+			lastTime = time;
+	}
+	animationFrameId = requestAnimationFrame(animeSpriteRight);
+};
+
+const generateBonePosition = () =>{
+    const x = Math.random() * (750 - 50) + 50;
+    const y = Math.random() * (550 - 50) + 50;
+    
+    return {
+        x, y
+    }
+}
+
+const createBone = (CTX) => {
+    CTX.drawImage(boneImage, bonePositionX, bonePositionY, 50, 50);
+}
+
+const checkPosition = () => {
+    if(parseInt(goblinPositionX) === parseInt(bonePositionX) || parseInt(goblinPositionY) === parseInt(bonePositionY)){
+        pontos++;
+    }
+}
 
 const loop = () => {
     if (hasKey('ArrowDown')) {
@@ -113,9 +181,10 @@ const loop = () => {
     if (hasKey('ArrowLeft')) {
         if (goblinPositionX >= -5) {
             goblinPositionX -= goblinDistancia;
-            console.log(goblinPositionX);
         }
     }
+
+    
 
     CTX.fillStyle = bgPattern;
     CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
@@ -130,6 +199,11 @@ const loop = () => {
         goblinPositionY, // Posição Y de desenho
         84, 120 // Draw
     );
+
+    createBone(CTX);
+    checkPosition();
+
+    pontuacao.innerText = pontos;
 
     requestAnimationFrame(loop);
 };
