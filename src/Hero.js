@@ -1,5 +1,6 @@
 
 import Circle from "./geometries/Circle";
+
 import { loadImage } from "./loaderAssets";
 
 export default class Hero extends Circle{
@@ -9,14 +10,12 @@ export default class Hero extends Circle{
 		this.imgUrl = imgUrl
 		loadImage(this.imgUrl).then(img=>{
 			this.img = img
-			this.cellWidth = img.naturalWidth/this.totalSprites+3.5
-			console.log('W:'+this.cellWidth)
 		})
-
 		
-		this.cellHeight= 177
+		this.cellWidth = 32
+		this.cellHeight= 49.2
 		this.cellX = 0
-		this.totalSprites = 3
+		this.totalSprites = 4
 		this.spriteSpeed = 1
 		console.log('H:'+this.cellHeight)
 		
@@ -75,8 +74,8 @@ export default class Hero extends Circle{
 	setCellY(){
 		let sprites = {
 			'down': 0,
-			'up': 1,
-			'left': 3,
+			'up': 3,
+			'left': 1,
 			'right':2
 		}
 
