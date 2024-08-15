@@ -17,8 +17,8 @@ const FRAMES = 60
 
 // const smile = new Smile(300, 100, 20, 5, 'yellow')
 
-const hero = new Hero(310,40,15,5,70,105,'../public/img/skeleton.png',FRAMES)
-const bone = new Bone(15,40,40,'../public/img/bone.png');
+const hero = new Hero(310,40,15,5,70,105,'./src/assets/img/skeleton.png',FRAMES)
+const bone = new Bone(15,40,40,'./src/assets/img/bone.png');
 const score = new Score();
 
 let gameover = false
@@ -31,7 +31,7 @@ const init = async () => {
 	CANVAS = document.querySelector('canvas')
 	CTX = CANVAS.getContext('2d')
 
-	const bgImage = await loadImage('../public/img/bg4.png');
+	const bgImage = await loadImage('./src/assets/img/game-background.png');
     bgPattern = CTX.createPattern(bgImage, 'repeat');
 	
 	boundaries = {
