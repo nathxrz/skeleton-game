@@ -9,7 +9,7 @@
 }
 
 body{
-	background-image: url(../assets/img/cemetery-image-back.png);
+	background-image: url(../../public/img/cemetery-image-back.png);
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
@@ -26,7 +26,7 @@ body{
 
 body::before{
 	content: '';
-	background-image: url(../assets/img/cemetery-image-front.png);
+	background-image: url(../../public/img/cemetery-image-front.png);
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
