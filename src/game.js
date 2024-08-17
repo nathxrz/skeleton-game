@@ -5,7 +5,7 @@ import Hero from "./Hero"
 import Bone from "./Bone"
 import Score from "./Score"
 
-import { loadImage } from "./loaderAssets";
+import { loadImage, loadAudio } from "./loaderAssets";
 
 let CTX
 let CANVAS
@@ -26,6 +26,9 @@ let anime;
 let boundaries
 let bgPattern = null;
 
+let sound = null;
+let theme = null;
+
 const init = async () => {
 	console.log("Initialize Canvas")
 	CANVAS = document.querySelector('canvas')
@@ -44,9 +47,30 @@ const init = async () => {
 	// 		Math.random()*CANVAS.height,
 	// 		10, 5, 'red'
 	// 	))
-	
+
+	try {
+		sound = await loadAudio('../../sounds/collect-items.mp3')
+		if(sound?.volume){
+			sound.volume = .5
+		}else{
+			throw new Error(`Problemas com o Audio!!`);
+		}
+	} catch (error) {
+		console.log(sound)
+		console.error(error)
+	}
+
+	try {
+		theme = await loadAudio('../sounds/background_music.mp3')
+		theme.volume = .2
+		theme.loop = true;
+	} catch (error) {
+		console.error(error)
+	}
+
 	keyPress(window)
 	loop()
+
 }
 
 const loop = () => {
@@ -56,8 +80,6 @@ const loop = () => {
 		CTX.fillStyle = bgPattern;
 		CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
 
-
-		
 		// smile.move(boundaries, key)
 		// smile.draw(CTX)
 
@@ -74,12 +96,15 @@ const loop = () => {
 		// 			: true;
 		// })
 
+		theme.play();
+
 		const scoring = hero.colide(bone)
 		
 		if(scoring) {
 			score.increment();
 			bone.updatePosition();
 			score.update();
+			sound.play();
 		}
 
 		if (gameover){
