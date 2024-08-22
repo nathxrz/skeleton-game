@@ -70,6 +70,10 @@ canvas{
 	width: 3rem;
 }
 
+#img-heart{
+	width: 4.5rem;
+}
+
 #score{
 	font-size: 2.6rem;
 	font-weight: 500;
