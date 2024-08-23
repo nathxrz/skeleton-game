@@ -29,8 +29,6 @@ class Heart extends Circle{
 			this.width,
 			this.height
 		)
-		//descomentar para ver a area de hit
-        this.hit.draw(CTX)
 	}
 
     generatePosition() {

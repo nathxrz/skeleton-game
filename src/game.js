@@ -1,55 +1,66 @@
-import Enemy from "./Enemy"
 import { keyPress, key } from "./keyboard"
+import { loadImage, loadAudio } from "./loaderAssets";
+
+import Enemy from "./Enemy"
 import Hero from "./Hero"
 import Bone from "./Bone"
-import Heart from "./Heart"
 import Score from "./Score"
-
-import { loadImage, loadAudio } from "./loaderAssets";
+import Heart from "./Heart"
 import Life from "./Life"
 
+window.start = false;
 let CTX
 let CANVAS
 const FRAMES = 60
 
-const qtdEnemies = 3
-
+//enemy variables
+const qtdEnemies = 1
 let enemies = Array.from({length:qtdEnemies});
 
+//objects
 const hero = new Hero(310,40,15,5,70,105,'../../img/skeleton.png',FRAMES)
 const bone = new Bone(15,40,40,'../../img/bone.png');
 const heart = new Heart(15,45,45,'../../img/heart.png');
 const score = new Score();
 const life = new Life();
 
+//sound variables
+let soundOfCollectingBone = null;
+let soundOfCollectingHeart = null;
+let soundOfLoseLife = null;
+let soundOfGameOver = null;
+let theme = null;
+
+//others variables
 let gameover = false
 let anime;
 let boundaries
 let bgPattern = null;
 
-let soundOfCollectingBone = null;
-let soundOfCollectingHeart = null;
-let theme = null;
-
 const init = async () => {
-	console.log("Initialize Canvas")
+	
+	//canvas
 	CANVAS = document.querySelector('canvas')
 	CTX = CANVAS.getContext('2d')
 
+	//canvas background image
 	const bgImage = await loadImage('../../img/game-background.png');
-    bgPattern = CTX.createPattern(bgImage, 'repeat');
+  bgPattern = CTX.createPattern(bgImage, 'repeat');
 	
+	//canvas limitations
 	boundaries = {
 		width: CANVAS.width,
 		height: CANVAS.height
 	}
 
+	//creation of enemies
 	enemies = enemies.map(i=>new Enemy(
 			Math.random()*CANVAS.width,
 			Math.random()*CANVAS.height,
 			10, 5, 'red'
 		))
 
+	//loading audio (bone)
 	try {
 		soundOfCollectingBone = await loadAudio('../../sounds/collect-bone.mp3')
 		if(soundOfCollectingBone?.volume){
@@ -62,6 +73,7 @@ const init = async () => {
 		console.error(error)
 	}
 
+	//loading audio (heart)
 	try {
 		soundOfCollectingHeart = await loadAudio('../../sounds/collect-heart.mp3')
 		if(soundOfCollectingHeart?.volume){
@@ -74,6 +86,33 @@ const init = async () => {
 		console.error(error)
 	}
 
+	//loading audio (lose life)
+	try {
+		soundOfLoseLife = await loadAudio('../../sounds/lose-life.mp3')
+		if(soundOfLoseLife?.volume){
+			soundOfLoseLife.volume = .5
+		}else{
+			throw new Error(`Problemas com o Audio!!`);
+		}
+	} catch (error) {
+		console.log(soundOfLoseLife)
+		console.error(error)
+	}
+
+	//loading audio (game over)
+	try {
+		soundOfGameOver = await loadAudio('../../sounds/game-over.mp3')
+		if(soundOfGameOver?.volume){
+			soundOfGameOver.volume = .5
+		}else{
+			throw new Error(`Problemas com o Audio!!`);
+		}
+	} catch (error) {
+		console.log(soundOfGameOver)
+		console.error(error)
+	}
+
+	//loading audio (theme)
 	try {
 		theme = await loadAudio('../sounds/background_music.mp3')
 		theme.volume = .2
@@ -94,34 +133,34 @@ const loop = () => {
 		CTX.fillStyle = bgPattern;
 		CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
 
-		// smile.move(boundaries, key)
-		// smile.draw(CTX)
-
 		hero.move(boundaries, key)
 		hero.draw(CTX)
 		bone.draw(CTX);
-		heart.draw(CTX);
-		
+
 		enemies.forEach(e =>{
-			e.move(boundaries, 0) 
+			e.move(boundaries) 
 			e.draw(CTX)
+			
+			if(hero.colide(e) && life.qtdlife > 0){
+				life.decrement();
+				e.updatePosition(boundaries)
+				soundOfLoseLife.play();
+			}else{
+				gameover = gameover || hero.colide(e);
+			}
 		})
 
-		// enemies.forEach(e =>{
-		// 	e.move(boundaries, 0) 
-		// 	e.draw(CTX)
-		// 	//  //var = teste?verdadeiro:falso;
-		// 	//  gameover = !gameover 
-		// 	//  		? hero.colide(e)
-		// 	// 		: true;
-		// })
+		if(life.qtdlife < 3){
+			heart.draw(CTX);
+		}
 
-		theme.play();
+		if(window.start){
+			theme.play();
+		}
 
 		const scoring = hero.colide(bone)
 		const collectLife = hero.colide(heart)
-		const colideArrow = hero.colide(enemies);
-		
+
 		if(scoring) {
 			score.increment();
 			bone.updatePosition();
@@ -130,20 +169,16 @@ const loop = () => {
 		}
 
 		if(collectLife){
-			life.increment;
+			life.increment();
 			heart.updatePosition();
 			soundOfCollectingHeart.play();
 		}
 
-		if(colideArrow && life.life > 0){
-			life.decrement;
-		}else{
-			if (gameover){
-				console.error('DEAD!!!')
-				cancelAnimationFrame(anime)
-			}else {
-				anime = requestAnimationFrame(loop)
-			}
+		if (gameover){
+			soundOfGameOver.play();
+			cancelAnimationFrame(anime)
+		}else {
+			anime = requestAnimationFrame(loop)
 		}
 
 	}, 1000 / FRAMES)

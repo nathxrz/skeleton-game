@@ -1,6 +1,4 @@
-
 import Circle from "./geometries/Circle";
-
 import { loadImage } from "./loaderAssets";
 
 export default class Hero extends Circle{
@@ -17,8 +15,6 @@ export default class Hero extends Circle{
 		this.cellX = 0
 		this.totalSprites = 4
 		this.spriteSpeed = 1
-		console.log('H:'+this.cellHeight)
-		
 
 		this.width = width
 		this.height = height
@@ -50,8 +46,6 @@ export default class Hero extends Circle{
 			this.width,
 			this.height
 		)
-		//descomentar para ver a area de hit
-		this.hit.draw(CTX)
 	}
 
 	animeSprite(FRAMES){ //Controla a animacao do sprite

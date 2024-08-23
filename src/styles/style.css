@@ -36,7 +36,6 @@ body::before{
 	display: flex;
 	position: absolute;
 	backdrop-filter: brightness(0);
-
 }
 
 .container{
