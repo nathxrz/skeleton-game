@@ -3,13 +3,15 @@ import { loadImage } from "./loaderAssets";
 
 export default class Hero extends Circle{
 
-	constructor(x, y, size, speed = 10, width, height,imgUrl,FRAMES) {
-		super(x, y, size, speed)
+	constructor(x, y, size, speed, width, height,imgUrl,FRAMES) {
+		super(x, y, size)
+
 		this.imgUrl = imgUrl
 		loadImage(this.imgUrl).then(img=>{
 			this.img = img
 		})
-		
+
+		this.speed = speed;
 		this.cellWidth = 32
 		this.cellHeight= 49.2
 		this.cellX = 0

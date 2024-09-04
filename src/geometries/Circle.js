@@ -1,5 +1,5 @@
 export default class Circle {
-	constructor(x, y, size, speed = 10, color = "#00f") {
+	constructor(x, y, size, speed, color = "#00f") {
 		this.x = x;
 		this.y = y;
 		this.size = size;

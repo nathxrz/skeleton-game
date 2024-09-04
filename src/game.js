@@ -14,11 +14,13 @@ let CANVAS
 const FRAMES = 60
 
 //enemy variables
-const qtdEnemies = 1
-let enemies = Array.from({length:qtdEnemies});
+const qtdEnemies = 2
+let enemiesY = Array.from({length:qtdEnemies});
+let enemiesX = Array.from({length:qtdEnemies});
 
 //objects
-const hero = new Hero(310,40,15,5,70,105,'../../img/skeleton.png',FRAMES)
+// const hero = new Hero(310,40,15,6,70,105,'../../img/skeleton.png',FRAMES)
+const hero = new Hero(310,40,15,6,70,105,'../../img/skeleton.png',FRAMES)
 const bone = new Bone(15,40,40,'../../img/bone.png');
 const heart = new Heart(15,45,45,'../../img/heart.png');
 const score = new Score();
@@ -32,7 +34,7 @@ let soundOfGameOver = null;
 let theme = null;
 
 //others variables
-let gameover = false
+let gameover = false;
 let anime;
 let boundaries
 let bgPattern = null;
@@ -45,7 +47,7 @@ const init = async () => {
 
 	//canvas background image
 	const bgImage = await loadImage('../../img/game-background.png');
-  bgPattern = CTX.createPattern(bgImage, 'repeat');
+	bgPattern = CTX.createPattern(bgImage, 'repeat');
 	
 	//canvas limitations
 	boundaries = {
@@ -54,11 +56,17 @@ const init = async () => {
 	}
 
 	//creation of enemies
-	enemies = enemies.map(i=>new Enemy(
+	enemiesY = enemiesY.map(i=>new Enemy(
 			Math.random()*CANVAS.width,
 			Math.random()*CANVAS.height,
-			10, 5, 'red'
+			10, 10, 'red'
 		))
+
+	enemiesX = enemiesX.map(i=>new Enemy(
+		Math.random()*CANVAS.width,
+		Math.random()*CANVAS.height,
+		10, 10, 'blue'
+	))
 
 	//loading audio (bone)
 	try {
@@ -137,13 +145,26 @@ const loop = () => {
 		hero.draw(CTX)
 		bone.draw(CTX);
 
-		enemies.forEach(e =>{
-			e.move(boundaries) 
+		enemiesY.forEach(e =>{
+			e.moveY(boundaries) 
 			e.draw(CTX)
 			
 			if(hero.colide(e) && life.qtdlife > 0){
 				life.decrement();
-				e.updatePosition(boundaries)
+				e.updatePositionY(boundaries)
+				soundOfLoseLife.play();
+			}else{
+				gameover = gameover || hero.colide(e);
+			}
+		})
+
+		enemiesX.forEach(e =>{
+			e.moveX(boundaries) 
+			e.draw(CTX)
+			
+			if(hero.colide(e) && life.qtdlife > 0){
+				life.decrement();
+				e.updatePositionX(boundaries)
 				soundOfLoseLife.play();
 			}else{
 				gameover = gameover || hero.colide(e);
