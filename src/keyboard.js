@@ -3,7 +3,9 @@ let key;
 
 function keyPress(element){
     element.addEventListener('keydown',event=>{
-        window.start = true;
+        if(event.key == "Enter"){
+            window.start = true;
+        }
         key = event.key
     })
 }

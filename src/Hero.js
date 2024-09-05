@@ -1,7 +1,8 @@
 import Circle from "./geometries/Circle";
+import Rect from "./geometries/Rect";
 import { loadImage } from "./loaderAssets";
 
-export default class Hero extends Circle{
+export default class Hero extends Rect{
 
 	constructor(x, y, size, speed, width, height,imgUrl,FRAMES) {
 		super(x, y, size)
@@ -23,9 +24,9 @@ export default class Hero extends Circle{
 
 		this.status = 'right'
 
-		this.hit = new Circle(
-			this.x + this.width/2,
-			this.y + this.height/2,
+		this.hit = new Rect(
+			this.x - this.width/2,
+			this.y - this.height/2,
 			this.size,
 			0,"rgba(0,0,255,.5)"
 		)
@@ -111,8 +112,8 @@ export default class Hero extends Circle{
 	}
 
 	updateHit(){
-		this.hit.x = this.x + this.width/2
-		this.hit.y = this.y + this.height/2
+		this.hit.x = this.x + 15
+		this.hit.y = this.y + 13
 	}
 
 	colide(other){

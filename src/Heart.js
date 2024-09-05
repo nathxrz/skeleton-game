@@ -21,7 +21,7 @@ class Heart extends Circle{
 		)
 	}
 
-    draw(CTX){
+  draw(CTX){
 		CTX.drawImage(
 			this.img,
 			this.x,

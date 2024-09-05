@@ -14,13 +14,15 @@ let CANVAS
 const FRAMES = 60
 
 //enemy variables
-const qtdEnemies = 2
+let qtdEnemies = 1
+let speed = 15;
 let enemiesY = Array.from({length:qtdEnemies});
 let enemiesX = Array.from({length:qtdEnemies});
-
+const createEnemyY = () => new Enemy(Math.random()*CANVAS.width, Math.random()*CANVAS.height, 10, speed, '../../img/fireballY.png', 'y')
+const createEnemyX = () => new Enemy(Math.random()*CANVAS.width, Math.random()*CANVAS.height, 10, speed, '../../img/fireballX.png', 'x')
 //objects
 // const hero = new Hero(310,40,15,6,70,105,'../../img/skeleton.png',FRAMES)
-const hero = new Hero(310,40,15,6,70,105,'../../img/skeleton.png',FRAMES)
+const hero = new Hero(310,40,40,8,70,105,'../../img/skeleton.png',FRAMES)
 const bone = new Bone(15,40,40,'../../img/bone.png');
 const heart = new Heart(15,45,45,'../../img/heart.png');
 const score = new Score();
@@ -56,17 +58,9 @@ const init = async () => {
 	}
 
 	//creation of enemies
-	enemiesY = enemiesY.map(i=>new Enemy(
-			Math.random()*CANVAS.width,
-			Math.random()*CANVAS.height,
-			10, 10, 'red'
-		))
+	enemiesY = enemiesY.map(i=>createEnemyY());
 
-	enemiesX = enemiesX.map(i=>new Enemy(
-		Math.random()*CANVAS.width,
-		Math.random()*CANVAS.height,
-		10, 10, 'blue'
-	))
+	enemiesX = enemiesX.map(i=>createEnemyX());
 
 	//loading audio (bone)
 	try {
@@ -85,7 +79,7 @@ const init = async () => {
 	try {
 		soundOfCollectingHeart = await loadAudio('../../sounds/collect-heart.mp3')
 		if(soundOfCollectingHeart?.volume){
-			soundOfCollectingHeart.volume = .5
+			soundOfCollectingHeart.volume = .4
 		}else{
 			throw new Error(`Problemas com o Audio!!`);
 		}
@@ -98,7 +92,7 @@ const init = async () => {
 	try {
 		soundOfLoseLife = await loadAudio('../../sounds/lose-life.mp3')
 		if(soundOfLoseLife?.volume){
-			soundOfLoseLife.volume = .5
+			soundOfLoseLife.volume = .4
 		}else{
 			throw new Error(`Problemas com o Audio!!`);
 		}
@@ -137,17 +131,20 @@ const init = async () => {
 const loop = () => {
 	setTimeout(() => {
 
-		CTX.clearRect(0, 0, CANVAS.width, CANVAS.height)
+		if(!window.start) return loop();
+
+		CTX.clearRect(0, 0, CANVAS.width, CANVAS.height);
 		CTX.fillStyle = bgPattern;
 		CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
 
-		hero.move(boundaries, key)
-		hero.draw(CTX)
+		hero.move(boundaries, key);
+		hero.draw(CTX);
 		bone.draw(CTX);
 
 		enemiesY.forEach(e =>{
 			e.moveY(boundaries) 
-			e.draw(CTX)
+			e.updateSpeed((speed + score.score)/2);
+			e.draw(CTX);
 			
 			if(hero.colide(e) && life.qtdlife > 0){
 				life.decrement();
@@ -159,6 +156,7 @@ const loop = () => {
 		})
 
 		enemiesX.forEach(e =>{
+			e.updateSpeed((speed + score.score)/2);
 			e.moveX(boundaries) 
 			e.draw(CTX)
 			
@@ -171,7 +169,10 @@ const loop = () => {
 			}
 		})
 
+		let collectLife = false
+
 		if(life.qtdlife < 3){
+			collectLife = hero.colide(heart)
 			heart.draw(CTX);
 		}
 
@@ -180,13 +181,20 @@ const loop = () => {
 		}
 
 		const scoring = hero.colide(bone)
-		const collectLife = hero.colide(heart)
 
 		if(scoring) {
 			score.increment();
 			bone.updatePosition();
 			score.update();
 			soundOfCollectingBone.play();
+
+			const newQtdEnemies = parseInt(1 + score.score/10);
+
+			if(qtdEnemies < newQtdEnemies) {
+				qtdEnemies = newQtdEnemies;
+				enemiesY.push(createEnemyY());
+				enemiesX.push(createEnemyX());
+			}
 		}
 
 		if(collectLife){
@@ -198,7 +206,8 @@ const loop = () => {
 		if (gameover){
 			soundOfGameOver.play();
 			cancelAnimationFrame(anime)
-		}else {
+			document.getElementById('game-over').classList.remove('hide');
+		} else{
 			anime = requestAnimationFrame(loop)
 		}
 

@@ -1,14 +1,32 @@
 import Circle from "./geometries/Circle";
+import { loadImage } from "./loaderAssets";
 
 export default class Enemy extends Circle{
-	constructor(x, y, size, speed, color) {
+	constructor(x, y, size, speed, imgUrl, eixo) {
 		super(x,y,size)
-		this.color = color;
+
+		this.imgUrl = imgUrl
+		loadImage(this.imgUrl).then(img=>{
+			this.img = img
+		})
+
 		this.speed = speed;
 		this.line = 1
-		this.size = size
+		this.eixo = eixo
 	}
 
+	draw(CTX){
+		CTX.drawImage(
+			this.img,
+			this.x,
+			this.y,
+			this.eixo === 'y' ? 42 : 64,
+			this.eixo === 'y' ? 64 : 42)
+	}
+
+	updateSpeed(speed){
+		this.speed = speed;
+	}
 	
 	moveY(limits){
 		this.y +=this.speed
