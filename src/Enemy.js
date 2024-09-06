@@ -3,7 +3,7 @@ import { loadImage } from "./loaderAssets";
 
 export default class Enemy extends Circle{
 	constructor(x, y, size, speed, imgUrl, eixo) {
-		super(x,y,size)
+		super(x,y,size);
 
 		this.imgUrl = imgUrl
 		loadImage(this.imgUrl).then(img=>{
@@ -11,8 +11,8 @@ export default class Enemy extends Circle{
 		})
 
 		this.speed = speed;
-		this.line = 1
-		this.eixo = eixo
+		this.line = 1;
+		this.eixo = eixo;
 	}
 
 	draw(CTX){
@@ -21,45 +21,45 @@ export default class Enemy extends Circle{
 			this.x,
 			this.y,
 			this.eixo === 'y' ? 42 : 64,
-			this.eixo === 'y' ? 64 : 42)
+			this.eixo === 'y' ? 64 : 42);
 	}
 
-	updateSpeed(speed){
-		this.speed = speed;
-	}
-	
 	moveY(limits){
-		this.y +=this.speed
-		this.limitsY(limits)
+		this.y +=this.speed;
+		this.limitsY(limits);
+	}
+
+	moveX(limits){
+		this.x +=this.speed;
+		this.limitsX(limits);
 	}
 
 	updatePositionY(limits){
-		this.x = Math.random()*limits.width,
-		this.y = 0
+		this.x = Math.random()*limits.width;
+		this.y = 0;
+	}
+
+	updatePositionX(limits){
+		this.x = 0;
+		this.y = Math.random()*limits.width;
 	}
 
 	limitsY(limits){
 		if(this.y - this.size > limits.height ){
-			this.y = -2*this.size
+			this.y = -2*this.size;
 			this.x = Math.random()*limits.width;
 		}
 	}
 
-	moveX(limits){
-		this.x +=this.speed
-		this.limitsX(limits)
-	}
-
-	updatePositionX(limits){
-		this.x = 0,
-		this.y = Math.random()*limits.width
-	}
-
 	limitsX(limits){
 		if(this.x - this.size > limits.width){
-			this.x = this.size
+			this.x = this.size;
 			this.y = Math.random()*limits.width;
 		}
+	}
+
+	updateSpeed(speed){
+		this.speed = speed;
 	}
 
 }

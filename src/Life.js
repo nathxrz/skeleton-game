@@ -5,10 +5,9 @@ export default class Life {
         this.updateLives();
     }
 
-    updateLives() {
-       
+    updateLives(){
         this.container.innerHTML = ''; 
-        for (let i = 0; i < this.qtdlife; i++) {
+        for (let i = 0; i < this.qtdlife; i++){
             const img = document.createElement("img");
             img.src = "../../img/heart.png";
             img.alt = "Vida";
@@ -16,8 +15,8 @@ export default class Life {
         }
     }
 
-    increment() {
-        if (this.qtdlife < 3) { 
+    increment(){
+        if (this.qtdlife < 3){ 
             this.qtdlife++;
             this.updateLives();
         }

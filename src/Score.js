@@ -3,12 +3,9 @@ export default class Score {
         this.element = document.getElementById('score');
         this.score = 0;
     }
-
-    increment(){
-        this.score++
-    }
-
+    
     update(){
+        this.score++;
         this.element.innerText = this.score;
     }
 }

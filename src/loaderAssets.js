@@ -7,7 +7,6 @@ const loadImage = async (url) =>
             return resolve(img);
         });
 
-
         img.src = url;
         console.log('loading img: ' + url)
 

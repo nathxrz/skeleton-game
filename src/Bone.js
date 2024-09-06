@@ -1,26 +1,21 @@
 import Circle from "./geometries/Circle";
 import { loadImage } from "./loaderAssets";
 
-class Bone extends Circle{
+export default class Bone extends Circle{
 	constructor(size, width, height,imgUrl) {
 		const x = Math.random() * (750 - 50) + 50;
 		const y = Math.random() * (550 - 50) + 50;	
 		super(x, y, size);
 		
-		this.imgUrl = imgUrl
+		this.imgUrl = imgUrl;
 		loadImage(this.imgUrl).then(img=>{
-			this.img = img
-		})
+			this.img = img;
+		});
 
-		this.width = width
-		this.height = height
+		this.width = width;
+		this.height = height;
 
-		this.hit = new Circle(
-		this.x + this.width/2,
-		this.y + this.height/2,
-		this.size,
-		0,"rgba(0,0,255,.5)")
-
+		this.hit = new Circle(this.x + this.width/2, this.y + this.height/2, this.size, 0,"rgba(0,0,255,.5)");
 	}
 
 	draw(CTX){
@@ -32,12 +27,6 @@ class Bone extends Circle{
 			this.height)
 	}
 	
-	generatePosition() {
-		const x = Math.random() * (750 - 50) + 50;
-		const y = Math.random() * (550 - 50) + 50;
-		return {x,y}
-	}
-
 	updatePosition(){
 		const {x, y} = this.generatePosition();
 		this.x = x,
@@ -45,9 +34,15 @@ class Bone extends Circle{
 		this.updateHit();        
 	}
 
+	generatePosition() {
+		const x = Math.random() * (750 - 50) + 50;
+		const y = Math.random() * (550 - 50) + 50;
+		return {x,y};
+	}
+
 	updateHit(){
-		this.hit.x = this.x + this.width/2
-		this.hit.y = this.y + this.height/2
+		this.hit.x = this.x + this.width/2;
+		this.hit.y = this.y + this.height/2;
 	}
 
 	colide(other){
@@ -56,5 +51,3 @@ class Bone extends Circle{
 		)
 	}
 }
-
-export default Bone;
